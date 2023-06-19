@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ActivityIndicator } from "react-native";
 import {
   CategoriesContainer,
@@ -14,17 +14,41 @@ import Menu from "../components/Menu";
 import Button from "../components/Button";
 import TableModal from "../components/TableModal";
 import Cart from "../components/Cart";
-import { CartItemProps, ProductProps } from "../types";
-import { products as MockProducts } from "../mocks/products";
+import { CartItemProps, CategoryProps, ProductProps } from "../types";
+
 import { Empty } from "../components/Icons/Empty";
 import { Text } from "../components/Text";
+
+import { api } from "../utils/api";
 
 const Main = () => {
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
   const [selectedTable, setSelectedTable] = useState("");
   const [cartItems, setCartItems] = useState<CartItemProps[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [products, setProducts] = useState<ProductProps[]>(MockProducts);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [categories, setCategories] = useState<CategoryProps[]>([]);
+  const [products, setProducts] = useState<ProductProps[]>([]);
+  const [loadingMenu, setLoadingMenu] = useState(false);
+
+  useEffect(() => {
+    Promise.all([api.get("/categories"), api.get("/products")])
+      .then(([categories, products]) => {
+        setCategories(categories.data);
+        setProducts(products.data);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleSelectCategory = async (categoryId: string) => {
+    setLoadingMenu(true);
+    const route = !categoryId
+      ? "/products"
+      : `/categories/${categoryId}/products`;
+    const response = await api.get(route);
+    setProducts(response.data);
+    setLoadingMenu(false);
+  };
 
   const handleSaveTable = (table: string) => {
     setSelectedTable(table);
@@ -97,19 +121,31 @@ const Main = () => {
         {!loading && (
           <>
             <CategoriesContainer>
-              <Categories />
+              <Categories
+                onSelectCategory={handleSelectCategory}
+                categories={categories}
+              />
             </CategoriesContainer>
-            {products.length > 0 ? (
-              <MenuContainer>
-                <Menu products={products} onAddToCart={handleAddToCart} />
-              </MenuContainer>
-            ) : (
+
+            {loadingMenu ? (
               <CenteredContainer>
-                <Empty />
-                <Text color="#666" style={{ marginTop: 24 }}>
-                  Nenhum produto foi encontrado!
-                </Text>
+                <ActivityIndicator size="large" color="#d73035" />
               </CenteredContainer>
+            ) : (
+              <>
+                {products.length > 0 ? (
+                  <MenuContainer>
+                    <Menu products={products} onAddToCart={handleAddToCart} />
+                  </MenuContainer>
+                ) : (
+                  <CenteredContainer>
+                    <Empty />
+                    <Text color="#666" style={{ marginTop: 24 }}>
+                      Nenhum produto foi encontrado!
+                    </Text>
+                  </CenteredContainer>
+                )}
+              </>
             )}
           </>
         )}
@@ -126,6 +162,7 @@ const Main = () => {
           )}
           {selectedTable && (
             <Cart
+              selectedTable={selectedTable}
               onAdd={handleAddToCart}
               onDecrement={handleDecrement}
               cartItem={cartItems}

@@ -7,9 +7,19 @@ interface OrderModalProps {
   isOpen: boolean;
   order: null | OrdersProps;
   onClose: () => void;
+  onCancelOrder: () => Promise<void>;
+  isLoading: boolean;
+  onChangeStatus: () => Promise<void>;
 }
 
-const OrderModal = ({ isOpen, order, onClose }: OrderModalProps) => {
+const OrderModal = ({
+  isOpen,
+  order,
+  onClose,
+  onCancelOrder,
+  isLoading,
+  onChangeStatus,
+}: OrderModalProps) => {
   if (!isOpen) {
     return null;
   }
@@ -72,11 +82,27 @@ const OrderModal = ({ isOpen, order, onClose }: OrderModalProps) => {
         </OrderDetails>
 
         <Actions>
-          <button type="button" className="primary">
-            <span>🧑‍🍳</span>
-            <strong>Iniciar produção</strong>
-          </button>
-          <button type="button" className="secondary">
+          {order?.status !== "DONE" && (
+            <button
+              onClick={onChangeStatus}
+              disabled={isLoading}
+              type="button"
+              className="primary"
+            >
+              <span>{order?.status === "WAITING" ? "🧑‍🍳" : "✅"}</span>
+              <strong>
+                {order?.status === "WAITING"
+                  ? "Iniciar produção"
+                  : "Finalizar pedido"}
+              </strong>
+            </button>
+          )}
+          <button
+            disabled={isLoading}
+            onClick={onCancelOrder}
+            type="button"
+            className="secondary"
+          >
             <strong>Cancelar pedido</strong>
           </button>
         </Actions>

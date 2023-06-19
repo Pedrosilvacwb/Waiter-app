@@ -17,22 +17,41 @@ import { PlusCircle } from "../Icons/PlusCircle";
 import { MinusCircle } from "../Icons/MinusCircle";
 import Button from "../Button";
 import OrderConfirmedModal from "../OrderConfirmedModal";
+import { api } from "../../utils/api";
 
 interface CartProps {
   cartItem: CartItemProps[];
   onAdd: (product: ProductProps) => void;
   onDecrement: (product: ProductProps) => void;
   onConfirmOrder: () => void;
+  selectedTable: string;
 }
 
-const Cart = ({ cartItem, onAdd, onDecrement, onConfirmOrder }: CartProps) => {
+const Cart = ({
+  cartItem,
+  onAdd,
+  onDecrement,
+  onConfirmOrder,
+  selectedTable,
+}: CartProps) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const total = cartItem.reduce((acc, item) => {
     return acc + item.quantity * item.product.price;
   }, 0);
 
-  const handleConfirmOrder = () => {
+  const handleConfirmOrder = async () => {
+    setLoading(true);
+    const data = {
+      table: selectedTable,
+      products: cartItem.map((item) => ({
+        product: item.product._id,
+        quantity: item.quantity,
+      })),
+    };
+
+    await api.post("/orders", data);
+    setLoading(false);
     setIsModalVisible(true);
   };
 
