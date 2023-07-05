@@ -5,7 +5,7 @@ export async function listCategories(req: Request, res: Response) {
   try {
     const categories = await Category.find();
 
-    res.status(200).json(categories);
+    return res.status(200).json(categories);
   } catch (error) {
     res.sendStatus(500);
   }

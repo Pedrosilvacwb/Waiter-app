@@ -1,18 +1,34 @@
-import logo from "../../assets/images/logo.svg";
-import { Container, Content } from "./styles";
+import CancelButton from "../CancelButton";
+import refresh from "../../assets/images/icons/interface/refresh.svg";
+import { AppHeader, Content } from "./styles";
 
-const Header = () => {
+interface HomeProps {
+  icon: string;
+  page: string;
+  label: string;
+  isHome?: boolean;
+  onOpenModal?: () => void;
+}
+
+const Header = ({ icon, page, label, isHome, onOpenModal }: HomeProps) => {
   return (
-    <Container>
+    <AppHeader>
       <Content>
-        <div className="page-details">
-          {" "}
-          <h1>Pedidos</h1>
-          <h2>Acompanhe os pedidos dos clientes</h2>
+        <div>
+          <img src={icon} alt={page} />
+          <strong>{page}</strong>
         </div>
-        <img src={logo} alt="logo waiterapp" />
+        <span>{label}</span>
       </Content>
-    </Container>
+
+      {isHome && (
+        <CancelButton
+          icon={refresh}
+          onClick={onOpenModal}
+          label={"Reiniciar o dia"}
+        />
+      )}
+    </AppHeader>
   );
 };
 

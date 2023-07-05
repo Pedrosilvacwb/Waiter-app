@@ -25,7 +25,9 @@ mongoose
       "/uploads",
       express.static(path.resolve(__dirname, "..", "uploads"))
     );
+
     app.use(express.json());
+
     app.use(router);
 
     server.listen(port, () => {

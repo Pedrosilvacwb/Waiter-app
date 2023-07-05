@@ -20,8 +20,9 @@ export const Product = model(
       required: true,
     },
     ingredients: {
-      type: [{ name: String, icon: String }],
+      type: [Schema.Types.ObjectId],
       required: true,
+      ref: "Ingredient",
     },
     category: {
       type: Schema.Types.ObjectId,

@@ -43,7 +43,7 @@ const Menu = ({ onAddToCart, products }: MenuProps) => {
           <Product onPress={() => handleOpenModal(item)}>
             <Image
               source={{
-                uri: `http://192.168.0.12:3001/uploads/${item.imagePath}`,
+                uri: `http://192.168.0.13:3001/uploads/${item.imagePath}`,
               }}
             />
             <ProductDetails>

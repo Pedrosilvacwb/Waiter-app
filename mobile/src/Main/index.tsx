@@ -39,7 +39,6 @@ const Main = () => {
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   }, []);
-
   const handleSelectCategory = async (categoryId: string) => {
     setLoadingMenu(true);
     const route = !categoryId

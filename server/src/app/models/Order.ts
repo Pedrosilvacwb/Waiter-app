@@ -16,6 +16,10 @@ export const Order = model(
       type: Date,
       default: Date.now,
     },
+    finished: {
+      type: Boolean,
+      default: false,
+    },
     products: {
       required: true,
       type: [

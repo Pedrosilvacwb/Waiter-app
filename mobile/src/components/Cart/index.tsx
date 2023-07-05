@@ -75,7 +75,7 @@ const Cart = ({
               <ProductContainer>
                 <Image
                   source={{
-                    uri: `http://192.168.0.12:3001/uploads/${item.product.imagePath}`,
+                    uri: `http://192.168.0.13:3001/uploads/${item.product.imagePath}`,
                   }}
                 />
 
