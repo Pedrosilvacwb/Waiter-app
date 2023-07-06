@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import styled from "styled-components";
 
 export const ProductContainer = styled.div`
   margin: 24px 32px 64px;
